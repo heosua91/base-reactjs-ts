@@ -1,26 +1,27 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Provider } from 'react-redux';
+import { Switch, Route } from 'react-router-dom';
+import { PersistGate } from 'redux-persist/integration/react';
+import { ConnectedRouter } from 'connected-react-router';
+import { persistor, store } from './store/store';
+import { history } from './store/middleware';
+import Counter from './components/Counter';
 
-function App() {
+export default function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    /* Provide Redux store */
+    <Provider store={store}>
+      {/* Asynchronously persist redux stores and show `SplashScreen` while it's loading. */}
+      <PersistGate persistor={persistor}>
+        <ConnectedRouter history={history}> { /* place ConnectedRouter under Provider */ }
+        <> { /* your usual react-router v4/v5 routing */ }
+          <Switch>
+            <Route exact path="/" render={() => (<div>Hello World<br /><Counter /></div>)} />
+            <Route render={() => (<div>Miss</div>)} />
+          </Switch>
+        </>
+      </ConnectedRouter>
+      </PersistGate>
+    </Provider>
   );
 }
-
-export default App;
